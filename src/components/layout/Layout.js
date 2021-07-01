@@ -12,12 +12,10 @@ import Session from "../../utils/session";
 
 function Layout(props) {
   const history = useHistory();
-  console.log(Session.getToken());
 
   if (Session.getToken() == null) {
     history.push("/login");
   } else {
-    console.log(window.location);
     if (
       window.location.pathname == "/login" ||
       window.location.pathname == "/signup" ||
