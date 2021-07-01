@@ -1,5 +1,6 @@
 import React from "react";
+import HomeLayout from "../../components/layout/homeLayout";
 
-export default function Home() {
-  return <div>Home</div>;
+export default function Home(props) {
+  return <HomeLayout title={"Dashboard"}></HomeLayout>;
 }
