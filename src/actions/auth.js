@@ -10,53 +10,32 @@ import Session from "../utils/session";
 
 import AuthService from "../services/auth.service";
 
-export const register = (username, email, password) => (dispatch) => {
-  return AuthService.register(username, email, password).then(
-    (response) => {
-      dispatch({
-        type: REGISTER_SUCCESS,
-      });
-
-      dispatch({
-        type: SET_MESSAGE,
-        payload: response.data.message,
-      });
-
-      return Promise.resolve();
-    },
-    (error) => {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-
-      dispatch({
-        type: REGISTER_FAIL,
-      });
-
-      dispatch({
-        type: SET_MESSAGE,
-        payload: message,
-      });
-
-      return Promise.reject();
+export const register = (user) => {
+  return AuthService.register(user).then((data) => {
+    if (data.newUser) {
+      return { type: REGISTER_SUCCESS, payload: { user: data } };
+    } else {
+      return { type: REGISTER_FAIL, payload: { user: data } };
     }
-  );
+  });
 };
 
 export const login = (user) => {
-  return AuthService.login(user).then((data) => {
-    Session.setToken(data.tokenData);
-    return { type: LOGIN_SUCCESS, payload: { user: data } };
-  });
+  return AuthService.login(user)
+    .then((data) => {
+      if (data.tokenData) {
+        Session.setToken(data.tokenData);
+        return { type: LOGIN_SUCCESS, payload: { user: data } };
+      } else {
+        console.log("1234", data);
+        return { type: LOGIN_FAIL, payload: { user: data } };
+      }
+    })
+    .catch((err) => {
+      return { type: LOGIN_FAIL, payload: err };
+    });
 };
 
 export const logout = () => (dispatch) => {
   AuthService.logout();
-
-  dispatch({
-    type: LOGOUT,
-  });
 };

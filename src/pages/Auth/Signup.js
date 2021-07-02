@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+
 import {
   Box,
   Button,
@@ -9,16 +12,40 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
+
 import FacebookIcon from "../../../src/Icons/Facebook";
 import GoogleIcon from "../../../src/Icons/Google";
+import AlertMessage from "../../components/Alert/AlertMessage";
 
-export default function Login() {
-  let [values, setValues] = useState({});
+import { register } from "../../actions/auth";
+
+function Register(props) {
+  let [values, setValues] = useState({
+    fname: "",
+    lname: "",
+    email: "",
+    password: "",
+    role: "user",
+  });
   let [isSubmitting, setIsSubmitting] = useState(false);
+  let [message, setMessage] = useState("");
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    let data = await register(values);
+    if (data.payload) {
+      if (data.payload.newUser) {
+        setMessage(data.payload.message);
+        props.history.push("/login");
+      } else {
+        setMessage(data.payload.user.data.message);
+      }
+    }
+  };
   const handleBlur = () => {};
-  const handleChange = () => {};
+  const handleChange = (event) => {
+    setValues({ ...values, [event.target.name]: event.target.value });
+  };
   return (
     <div style={{ marginTop: "7%", textAlign: "center" }}>
       <Box
@@ -37,12 +64,41 @@ export default function Login() {
                 Register
               </Typography>
             </Box>
+            {message && (
+              <AlertMessage
+                severity={"error"}
+                title={"Error"}
+                message={message}
+              />
+            )}
             <Box
               sx={{
                 pb: 1,
                 pt: 3,
               }}
             ></Box>
+            <TextField
+              fullWidth
+              label="First Name"
+              margin="normal"
+              name="fname"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              type="text"
+              value={values.fname}
+              //   variant="outlined"
+            />
+            <TextField
+              fullWidth
+              label="Last Name"
+              margin="normal"
+              name="lname"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              type="text"
+              value={values.lname}
+              //   variant="outlined"
+            />
             <TextField
               fullWidth
               label="Email Address"
@@ -89,3 +145,16 @@ export default function Login() {
     </div>
   );
 }
+
+export default withRouter(
+  connect(
+    (state) => ({ auth: state.auth.user }),
+    (dispatch) =>
+      bindActionCreators(
+        {
+          register,
+        },
+        dispatch
+      )
+  )(Register)
+);

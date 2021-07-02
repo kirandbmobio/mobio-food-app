@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -16,10 +16,12 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import RestaurantIcon from "@material-ui/icons/Restaurant";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 import MenuItems from "../../utils/MenuItems";
+import Session from "../../utils/session";
 
 const drawerWidth = 240;
 
@@ -85,6 +87,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function MiniDrawer(props) {
+  const history = useHistory();
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -95,6 +98,11 @@ export default function MiniDrawer(props) {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const logout = () => {
+    Session.removeToken();
+    history.push("/login");
   };
 
   return (
@@ -149,14 +157,14 @@ export default function MiniDrawer(props) {
         <List>
           {MenuItems.map((text, index) => (
             <Link
-              to="/restaurant"
+              to={text.url}
               variant="h6"
               style={{ color: "black" }}
               key={text.name}
             >
               <ListItem button>
                 <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {index % 2 === 0 ? <RestaurantIcon /> : <AccountCircleIcon />}
                 </ListItemIcon>
                 {text.name}
               </ListItem>
@@ -165,14 +173,12 @@ export default function MiniDrawer(props) {
         </List>
         <Divider />
         <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
+          <ListItem button onClick={logout}>
+            <ListItemIcon>
+              <ExitToAppIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Logout"} />
+          </ListItem>
         </List>
       </Drawer>
       {props.children}
