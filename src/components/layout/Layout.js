@@ -14,7 +14,9 @@ function Layout(props) {
   const history = useHistory();
 
   if (Session.getToken() == null) {
-    history.push("/login");
+    if (window.location.pathname !== "/signup") {
+      history.push("/login");
+    }
   } else {
     if (
       window.location.pathname == "/login" ||

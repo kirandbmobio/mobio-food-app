@@ -5,6 +5,10 @@ const Session = {
   setToken(token) {
     return localStorage.setItem("token", token);
   },
+  removeToken() {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+  },
 };
 
 export default Session;

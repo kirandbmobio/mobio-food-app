@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core";
 import FacebookIcon from "../../../src/Icons/Facebook";
 import GoogleIcon from "../../../src/Icons/Google";
+import AlertMessage from "../../components/Alert/AlertMessage";
 
 import { login } from "../../actions/auth";
 
@@ -21,13 +22,20 @@ function Login(props) {
   //   let history = useHistory();
   let [values, setValues] = useState({ email: "", password: "" });
   let [isSubmitting, setIsSubmitting] = useState(false);
+  let [message, setMessage] = useState("");
 
   const handleSubmit = async (event) => {
+    setMessage("");
     event.preventDefault();
     let data = await login(values);
+
     if (data.payload) {
       if (data.payload.user) {
         props.history.push("/home");
+      } else {
+        if (data.payload.response) {
+          setMessage(data.payload.response.data.message);
+        }
       }
     }
   };
@@ -59,6 +67,13 @@ function Login(props) {
                 pt: 3,
               }}
             ></Box>
+            {message && (
+              <AlertMessage
+                severity={"error"}
+                title={"Error"}
+                message={message}
+              />
+            )}
             <TextField
               fullWidth
               label="Email Address"
