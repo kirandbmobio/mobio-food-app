@@ -16,28 +16,28 @@ import FacebookIcon from "../../../src/Icons/Facebook";
 import GoogleIcon from "../../../src/Icons/Google";
 import AlertMessage from "../../components/Alert/AlertMessage";
 
-import { login } from "../../actions/auth";
+import { login, forgotPassword } from "../../actions/auth";
 
-function Login(props) {
+function ForgotPassword(props) {
   //   let history = useHistory();
-  let [values, setValues] = useState({ email: "", password: "" });
+  let [values, setValues] = useState({ email: "" });
   let [isSubmitting, setIsSubmitting] = useState(false);
   let [message, setMessage] = useState("");
 
   const handleSubmit = async (event) => {
     setMessage("");
     event.preventDefault();
-    let data = await login(values);
-
+    let data = await forgotPassword(values);
     if (data.payload) {
-      if (data.payload.user) {
-        props.history.push("/home");
+      if (data.payload.data) {
+        setMessage("success");
+        props.history.push("/login");
       } else {
-        if (data.payload.response) {
-          setMessage(data.payload.response.data.message);
-        }
+        setMessage(data.payload.response.data.message);
+        console.log("data", data);
       }
     }
+    console.log("forgot Password", values, data);
   };
   const handleBlur = () => {};
   const handleChange = (event) => {
@@ -58,7 +58,8 @@ function Login(props) {
           <form onSubmit={handleSubmit}>
             <Box sx={{ mb: 3 }}>
               <Typography color="textPrimary" variant="h2">
-                Sign in
+                Forgot Password
+                {/* Enter Email which you want to reset password */}
               </Typography>
             </Box>
             <Box
@@ -74,6 +75,7 @@ function Login(props) {
                 message={message}
               />
             )}
+
             <TextField
               fullWidth
               label="Email Address"
@@ -85,17 +87,10 @@ function Login(props) {
               value={values.email}
               //   variant="outlined"
             />
-            <TextField
-              fullWidth
-              label="Password"
-              margin="normal"
-              name="password"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              type="password"
-              value={values.password}
-              //   variant="outlined"
-            />
+            <div style={{ color: "grey", float: "left", margin: "8px" }}>
+              Reset password link will be sent to your{" "}
+              <a href="javascript:void(0)">{values.email}</a> email id
+            </div>
             <Box sx={{ py: 2 }} m={2}>
               <Button
                 color="primary"
@@ -105,18 +100,13 @@ function Login(props) {
                 type="submit"
                 variant="contained"
               >
-                Sign in now
+                Send Mail
               </Button>
             </Box>
-            <Typography color="textPrimary">
-              <Link component={RouterLink} to="/forgot-password">
-                Forgot Password?
-              </Link>
-            </Typography>
             <Typography color="textSecondary" variant="body1">
-              Don&apos;t have an account?
-              <Link component={RouterLink} to="/signup" variant="h6">
-                Sign up
+              Already have an account?
+              <Link component={RouterLink} to="/login" variant="h6">
+                Login
               </Link>
             </Typography>
           </form>
@@ -132,9 +122,9 @@ export default withRouter(
     (dispatch) =>
       bindActionCreators(
         {
-          login,
+          forgotPassword,
         },
         dispatch
       )
-  )(Login)
+  )(ForgotPassword)
 );

@@ -14,7 +14,11 @@ function Layout(props) {
   const history = useHistory();
 
   if (Session.getToken() == null) {
-    if (window.location.pathname !== "/signup") {
+    if (
+      window.location.pathname == "/restaurant" ||
+      window.location.pathname == "/profile" ||
+      window.location.pathname == "/home"
+    ) {
       history.push("/login");
     }
   } else {

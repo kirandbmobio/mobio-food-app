@@ -5,6 +5,8 @@ import {
   LOGIN_FAIL,
   LOGOUT,
   SET_MESSAGE,
+  FORGOT_PASSWORD_SUCCESS,
+  FORGOT_PASSWORD_FAIL,
 } from "./types";
 import Session from "../utils/session";
 
@@ -33,6 +35,16 @@ export const login = (user) => {
     })
     .catch((err) => {
       return { type: LOGIN_FAIL, payload: err };
+    });
+};
+
+export const forgotPassword = (user) => {
+  return AuthService.forgotPassword(user)
+    .then((data) => {
+      return { type: FORGOT_PASSWORD_SUCCESS, payload: { data } };
+    })
+    .catch((err) => {
+      return { type: FORGOT_PASSWORD_FAIL, payload: err };
     });
 };
 
