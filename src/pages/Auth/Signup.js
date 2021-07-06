@@ -33,9 +33,10 @@ function Register(props) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     let data = await register(values);
+
     if (data.payload) {
-      if (data.payload.newUser) {
-        setMessage(data.payload.message);
+      if (data.payload.user.data.user) {
+        setMessage(data.payload.user.data.message);
         props.history.push("/login");
       } else {
         setMessage(data.payload.user.data.message);

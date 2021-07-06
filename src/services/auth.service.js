@@ -28,6 +28,12 @@ const login = ({ email, password }) => {
     });
 };
 
+const forgotPassword = ({ email }) => {
+  return axios.post(API_URL + "forgot-password", { email }).then((response) => {
+    return response.data;
+  });
+};
+
 const logout = () => {
   localStorage.removeItem("user");
   localStorage.removeItem("token");
@@ -37,4 +43,5 @@ export default {
   register,
   login,
   logout,
+  forgotPassword,
 };

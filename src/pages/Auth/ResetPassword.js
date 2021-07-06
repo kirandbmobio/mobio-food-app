@@ -20,7 +20,10 @@ import { login } from "../../actions/auth";
 
 function Login(props) {
   //   let history = useHistory();
-  let [values, setValues] = useState({ email: "", password: "" });
+  let [values, setValues] = useState({
+    new_password: "",
+    confirm_password: "",
+  });
   let [isSubmitting, setIsSubmitting] = useState(false);
   let [message, setMessage] = useState("");
 
@@ -58,7 +61,7 @@ function Login(props) {
           <form onSubmit={handleSubmit}>
             <Box sx={{ mb: 3 }}>
               <Typography color="textPrimary" variant="h2">
-                Sign in
+                Reset Password
               </Typography>
             </Box>
             <Box
@@ -76,24 +79,24 @@ function Login(props) {
             )}
             <TextField
               fullWidth
-              label="Email Address"
+              label="New Password"
               margin="normal"
-              name="email"
+              name="new_password"
               onBlur={handleBlur}
               onChange={handleChange}
-              type="email"
-              value={values.email}
+              type="text"
+              value={values.new_password}
               //   variant="outlined"
             />
             <TextField
               fullWidth
-              label="Password"
+              label="Confirm Password"
               margin="normal"
-              name="password"
+              name="confirm_password"
               onBlur={handleBlur}
               onChange={handleChange}
               type="password"
-              value={values.password}
+              value={values.confirm_password}
               //   variant="outlined"
             />
             <Box sx={{ py: 2 }} m={2}>
@@ -105,18 +108,13 @@ function Login(props) {
                 type="submit"
                 variant="contained"
               >
-                Sign in now
+                Submit
               </Button>
             </Box>
-            <Typography color="textPrimary">
-              <Link component={RouterLink} to="/forgot-password">
-                Forgot Password?
-              </Link>
-            </Typography>
             <Typography color="textSecondary" variant="body1">
-              Don&apos;t have an account?
-              <Link component={RouterLink} to="/signup" variant="h6">
-                Sign up
+              Already have an account?
+              <Link component={RouterLink} to="/login" variant="h6">
+                Login
               </Link>
             </Typography>
           </form>
@@ -132,7 +130,7 @@ export default withRouter(
     (dispatch) =>
       bindActionCreators(
         {
-          login,
+          //   resetPassword,
         },
         dispatch
       )
