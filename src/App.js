@@ -2,6 +2,7 @@ import "./index.css";
 
 import React from "react";
 import { Switch, Route, Redirect } from "react-router";
+import { ToastContainer } from "react-toastify";
 
 import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/Signup";
@@ -17,6 +18,7 @@ import Session from "./utils/session";
 function App() {
   return (
     <Layout>
+      <ToastContainer />
       <Switch>
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />

@@ -2,6 +2,7 @@ import React, { useState, useHistory } from "react";
 import { Link as RouterLink, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import * as yup from "yup";
 
 import {
   Box,
@@ -12,32 +13,35 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import FacebookIcon from "../../../src/Icons/Facebook";
-import GoogleIcon from "../../../src/Icons/Google";
-import AlertMessage from "../../components/Alert/AlertMessage";
 
 import { login, forgotPassword } from "../../actions/auth";
+import Toast from "../../utils/toast";
+import { forgotPasswordSchema } from "../../utils/yup";
 
 function ForgotPassword(props) {
   //   let history = useHistory();
   let [values, setValues] = useState({ email: "" });
   let [isSubmitting, setIsSubmitting] = useState(false);
-  let [message, setMessage] = useState("");
 
   const handleSubmit = async (event) => {
-    setMessage("");
     event.preventDefault();
-    let data = await forgotPassword(values);
-    if (data.payload) {
-      if (data.payload.data) {
-        setMessage("success");
-        props.history.push("/login");
-      } else {
-        setMessage(data.payload.response.data.message);
-        console.log("data", data);
+    await forgotPasswordSchema.validate(values).catch((err) => {
+      err.errors.forEach((nerr) => {
+        Toast.errorToastMessage(nerr);
+      });
+    });
+    let valid = await forgotPasswordSchema.isValid(values);
+    if (valid) {
+      let data = await forgotPassword(values);
+      if (data.payload) {
+        if (data.payload.data) {
+          props.history.push("/login");
+          Toast.successToastMessage("Link is sent to your email address!");
+        } else {
+          Toast.errorToastMessage(data.payload.response.data.message);
+        }
       }
     }
-    console.log("forgot Password", values, data);
   };
   const handleBlur = () => {};
   const handleChange = (event) => {
@@ -68,13 +72,6 @@ function ForgotPassword(props) {
                 pt: 3,
               }}
             ></Box>
-            {message && (
-              <AlertMessage
-                severity={"error"}
-                title={"Error"}
-                message={message}
-              />
-            )}
 
             <TextField
               fullWidth
@@ -89,7 +86,7 @@ function ForgotPassword(props) {
             />
             <div style={{ color: "grey", float: "left", margin: "8px" }}>
               Reset password link will be sent to your{" "}
-              <a href="javascript:void(0)">{values.email}</a> email id
+              <span style={{ color: "blue" }}>{values.email}</span> email id
             </div>
             <Box sx={{ py: 2 }} m={2}>
               <Button

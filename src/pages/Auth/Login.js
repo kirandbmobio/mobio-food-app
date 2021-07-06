@@ -1,4 +1,4 @@
-import React, { useState, useHistory } from "react";
+import React, { useState } from "react";
 import { Link as RouterLink, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -7,34 +7,38 @@ import {
   Box,
   Button,
   Container,
-  Grid,
   Link,
   TextField,
   Typography,
 } from "@material-ui/core";
-import FacebookIcon from "../../../src/Icons/Facebook";
-import GoogleIcon from "../../../src/Icons/Google";
-import AlertMessage from "../../components/Alert/AlertMessage";
 
 import { login } from "../../actions/auth";
+import Toast from "../../utils/toast";
+import { loginSchema } from "../../utils/yup";
 
 function Login(props) {
-  //   let history = useHistory();
   let [values, setValues] = useState({ email: "", password: "" });
   let [isSubmitting, setIsSubmitting] = useState(false);
-  let [message, setMessage] = useState("");
 
   const handleSubmit = async (event) => {
-    setMessage("");
     event.preventDefault();
-    let data = await login(values);
+    await loginSchema.validate(values).catch((err) => {
+      err.errors.forEach((nerr) => {
+        Toast.errorToastMessage(nerr);
+      });
+    });
+    let valid = await loginSchema.isValid(values);
+    if (valid) {
+      let data = await login(values);
 
-    if (data.payload) {
-      if (data.payload.user) {
-        props.history.push("/home");
-      } else {
-        if (data.payload.response) {
-          setMessage(data.payload.response.data.message);
+      if (data.payload) {
+        if (data.payload.user) {
+          props.history.push("/home");
+          Toast.successToastMessage("Login Successfully");
+        } else {
+          if (data.payload.response) {
+            Toast.errorToastMessage(data.payload.response.data.message);
+          }
         }
       }
     }
@@ -67,13 +71,6 @@ function Login(props) {
                 pt: 3,
               }}
             ></Box>
-            {message && (
-              <AlertMessage
-                severity={"error"}
-                title={"Error"}
-                message={message}
-              />
-            )}
             <TextField
               fullWidth
               label="Email Address"
