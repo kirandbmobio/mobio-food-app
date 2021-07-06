@@ -12,11 +12,10 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import FacebookIcon from "../../../src/Icons/Facebook";
-import GoogleIcon from "../../../src/Icons/Google";
-import AlertMessage from "../../components/Alert/AlertMessage";
 
-import { login } from "../../actions/auth";
+import { resetPassword } from "../../actions/auth";
+import Toast from "../../utils/toast";
+import { resetPasswordSchema } from "../../utils/yup";
 
 function Login(props) {
   //   let history = useHistory();
@@ -24,21 +23,45 @@ function Login(props) {
     new_password: "",
     confirm_password: "",
   });
+  let [token, setToken] = useState("");
   let [isSubmitting, setIsSubmitting] = useState(false);
-  let [message, setMessage] = useState("");
 
   const handleSubmit = async (event) => {
-    setMessage("");
     event.preventDefault();
-    let data = await login(values);
-
-    if (data.payload) {
-      if (data.payload.user) {
-        props.history.push("/home");
+    await resetPasswordSchema.validate(values).catch((err) => {
+      err.errors.forEach((nerr) => {
+        Toast.errorToastMessage(nerr);
+      });
+    });
+    let valid = await resetPasswordSchema.isValid(values);
+    if (valid) {
+      if (props.match.params.id) {
+        setToken(props.match.params.id.toString());
       } else {
-        if (data.payload.response) {
-          setMessage(data.payload.response.data.message);
+        return Toast.errorToastMessage("Please pass token");
+      }
+      if (!values.new_password && !values.confirm_password) {
+        return Toast.errorToastMessage("Please enter both of them");
+      } else {
+        if (values.new_password != values.confirm_password) {
+          return Toast.errorToastMessage(
+            "Password and confirm password Mismatch!"
+          );
         }
+      }
+      let data = await resetPassword({
+        ...values,
+        token: props.match.params.id,
+      });
+      if (data.payload.data) {
+        if (data.payload.data.status == "Error") {
+          return Toast.errorToastMessage(data.payload.data.message);
+        } else if (data.payload.data.status == "Success") {
+          Toast.successToastMessage(data.payload.data.message);
+          props.history.push("/login");
+        }
+      } else {
+        return Toast.errorToastMessage(data.payload.response.data.message);
       }
     }
   };
@@ -70,13 +93,13 @@ function Login(props) {
                 pt: 3,
               }}
             ></Box>
-            {message && (
+            {/* {message && (
               <AlertMessage
                 severity={"error"}
                 title={"Error"}
                 message={message}
               />
-            )}
+            )} */}
             <TextField
               fullWidth
               label="New Password"
@@ -130,7 +153,7 @@ export default withRouter(
     (dispatch) =>
       bindActionCreators(
         {
-          //   resetPassword,
+          resetPassword,
         },
         dispatch
       )

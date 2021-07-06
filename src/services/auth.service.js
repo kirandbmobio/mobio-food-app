@@ -34,6 +34,14 @@ const forgotPassword = ({ email }) => {
   });
 };
 
+const resetPassword = ({ new_password, token }) => {
+  return axios
+    .post(API_URL + "reset-password?token=" + token, { new_password })
+    .then((response) => {
+      return response.data;
+    });
+};
+
 const logout = () => {
   localStorage.removeItem("user");
   localStorage.removeItem("token");
@@ -44,4 +52,5 @@ export default {
   login,
   logout,
   forgotPassword,
+  resetPassword,
 };

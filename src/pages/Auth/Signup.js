@@ -13,11 +13,9 @@ import {
   Typography,
 } from "@material-ui/core";
 
-import FacebookIcon from "../../../src/Icons/Facebook";
-import GoogleIcon from "../../../src/Icons/Google";
-import AlertMessage from "../../components/Alert/AlertMessage";
-
 import { register } from "../../actions/auth";
+import Toast from "../../utils/toast";
+import { signupSchema } from "../../utils/yup";
 
 function Register(props) {
   let [values, setValues] = useState({
@@ -28,18 +26,25 @@ function Register(props) {
     role: "user",
   });
   let [isSubmitting, setIsSubmitting] = useState(false);
-  let [message, setMessage] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let data = await register(values);
+    await signupSchema.validate(values).catch((err) => {
+      err.errors.forEach((nerr) => {
+        Toast.errorToastMessage(nerr);
+      });
+    });
+    let valid = await signupSchema.isValid(values);
+    if (valid) {
+      let data = await register(values);
 
-    if (data.payload) {
-      if (data.payload.user.data.user) {
-        setMessage(data.payload.user.data.message);
-        props.history.push("/login");
-      } else {
-        setMessage(data.payload.user.data.message);
+      if (data.payload) {
+        if (data.payload.user.data.user) {
+          Toast.successToastMessage(data.payload.user.data.message);
+          props.history.push("/login");
+        } else {
+          Toast.errorToastMessage(data.payload.user.data.message);
+        }
       }
     }
   };
@@ -65,13 +70,7 @@ function Register(props) {
                 Register
               </Typography>
             </Box>
-            {message && (
-              <AlertMessage
-                severity={"error"}
-                title={"Error"}
-                message={message}
-              />
-            )}
+
             <Box
               sx={{
                 pb: 1,

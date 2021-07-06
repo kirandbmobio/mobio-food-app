@@ -22,6 +22,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 import MenuItems from "../../utils/MenuItems";
 import Session from "../../utils/session";
+import Toast from "../../utils/toast";
 
 const drawerWidth = 240;
 
@@ -103,6 +104,7 @@ export default function MiniDrawer(props) {
   const logout = () => {
     Session.removeToken();
     history.push("/login");
+    Toast.errorToastMessage("Logout successfully");
   };
 
   return (

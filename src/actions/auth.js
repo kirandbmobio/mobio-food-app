@@ -7,6 +7,8 @@ import {
   SET_MESSAGE,
   FORGOT_PASSWORD_SUCCESS,
   FORGOT_PASSWORD_FAIL,
+  RESET_PASSWORD_SUCCESS,
+  RESET_PASSWORD_FAIL,
 } from "./types";
 import Session from "../utils/session";
 
@@ -29,7 +31,6 @@ export const login = (user) => {
         Session.setToken(data.tokenData);
         return { type: LOGIN_SUCCESS, payload: { user: data } };
       } else {
-        console.log("1234", data);
         return { type: LOGIN_FAIL, payload: { user: data } };
       }
     })
@@ -45,6 +46,16 @@ export const forgotPassword = (user) => {
     })
     .catch((err) => {
       return { type: FORGOT_PASSWORD_FAIL, payload: err };
+    });
+};
+
+export const resetPassword = (payload) => {
+  return AuthService.resetPassword(payload)
+    .then((data) => {
+      return { type: RESET_PASSWORD_SUCCESS, payload: { data } };
+    })
+    .catch((err) => {
+      return { type: RESET_PASSWORD_FAIL, payload: err };
     });
 };
 
