@@ -1,9 +1,7 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:8000/api/auth/";
+import api from "../utils/axios";
 
 const register = ({ fname, lname, email, password, role }) => {
-  return axios.post(API_URL + "register", {
+  return api.post("/register", {
     fname,
     lname,
     email,
@@ -13,8 +11,8 @@ const register = ({ fname, lname, email, password, role }) => {
 };
 
 const login = ({ email, password }) => {
-  return axios
-    .post(API_URL + "login", {
+  return api
+    .post("/login", {
       email,
       password,
     })
@@ -29,14 +27,14 @@ const login = ({ email, password }) => {
 };
 
 const forgotPassword = ({ email }) => {
-  return axios.post(API_URL + "forgot-password", { email }).then((response) => {
+  return api.post("/forgot-password", { email }).then((response) => {
     return response.data;
   });
 };
 
 const resetPassword = ({ new_password, token }) => {
-  return axios
-    .post(API_URL + "reset-password?token=" + token, { new_password })
+  return api
+    .post("/reset-password?token=" + token, { new_password })
     .then((response) => {
       return response.data;
     });
