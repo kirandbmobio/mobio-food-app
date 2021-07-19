@@ -29,6 +29,7 @@ export const login = (user) => {
     .then((data) => {
       if (data.tokenData) {
         Session.setToken(data.tokenData);
+        console.log(data);
         return { type: LOGIN_SUCCESS, payload: { user: data } };
       } else {
         return { type: LOGIN_FAIL, payload: { user: data } };
