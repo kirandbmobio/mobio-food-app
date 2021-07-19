@@ -5,19 +5,30 @@ import { connect } from "react-redux";
 import HomeLayout from "../../components/layout/homeLayout";
 import ProfileDetails from "../../components/user/ProfileDetails";
 
-import { getProfileData } from "../../actions/user";
-import auth from "../../store/reducers/auth";
+import { getProfileData, updateUser } from "../../actions/user";
+import toast from "../../utils/toast";
 
 function Profile(props) {
   const submitProfile = async (values) => {
-    console.log(values);
+    let response = await props.updateUser(values);
+    if (response.data) {
+      return toast.successToastMessage(response.data.message);
+    } else {
+      return toast.errorToastMessage(response.response.data.message);
+    }
   };
+  const changePassword = async (password) => {};
   useEffect(() => {
     props.getProfileData();
   }, []);
+
   return (
     <HomeLayout>
-      <ProfileDetails profileData={auth.user} submit={submitProfile} />
+      <ProfileDetails
+        profileData={props.auth.profileUser}
+        submit={submitProfile}
+        changePassword={changePassword}
+      />
     </HomeLayout>
   );
 }
@@ -25,6 +36,7 @@ function Profile(props) {
 const mapStateToProps = (state) => ({ auth: state.auth });
 const mapDispatchToProps = {
   getProfileData,
+  updateUser,
 };
 
 export default withRouter(

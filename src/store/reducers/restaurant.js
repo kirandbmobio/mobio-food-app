@@ -14,9 +14,16 @@ const initialState = {
 };
 
 export default function (state = initialState, action) {
+  state.errors = [];
+  state.successMessages = [];
   switch (action.type) {
     case LIST_RESTAURANT:
-      state = { ...state, restaurants: action.payload.data.data };
+      state = {
+        ...state,
+        errors: [],
+        successMessages: [],
+        restaurants: action.payload.data.data,
+      };
       return state;
 
     case ADD_RESTAURANT_SUCCESS:

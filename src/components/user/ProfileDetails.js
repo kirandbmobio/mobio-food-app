@@ -17,6 +17,8 @@ const ProfileDetails = (props) => {
     email: "",
   });
 
+  const [password, setPassword] = useState("");
+
   const handleChange = (event) => {
     setValues({
       ...values,
@@ -32,6 +34,10 @@ const ProfileDetails = (props) => {
 
   const submit = () => {
     props.submit(values);
+  };
+  const changePassword = () => {
+    props.changePassword(password);
+    setPassword("");
   };
   return (
     <form autoComplete="off" noValidate>
@@ -70,9 +76,33 @@ const ProfileDetails = (props) => {
                 name="email"
                 onChange={handleChange}
                 required
+                type="email"
                 value={values.email}
                 variant="outlined"
               />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="New Password"
+                name="password"
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                type="password"
+                value={password}
+                variant="outlined"
+              />
+              <Button
+                style={{
+                  margin: "10px",
+                }}
+                color="primary"
+                disabled={password ? false : true}
+                variant="contained"
+                onClick={changePassword}
+              >
+                Change Password
+              </Button>
             </Grid>
           </Grid>
         </CardContent>
@@ -84,7 +114,12 @@ const ProfileDetails = (props) => {
             margin: "10px",
           }}
         >
-          <Button color="primary" variant="contained" onClick={submit}>
+          <Button
+            color="primary"
+            disabled={values.email && !password ? false : true}
+            variant="contained"
+            onClick={submit}
+          >
             Save details
           </Button>
         </Box>
