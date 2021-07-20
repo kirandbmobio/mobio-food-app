@@ -15,3 +15,11 @@ export const userUpdate = async (user) => {
     return err;
   }
 };
+
+export const passwordChange = async (user) => {
+  try {
+    return await api.put("/user/changePassword", user);
+  } catch (err) {
+    return err;
+  }
+};
