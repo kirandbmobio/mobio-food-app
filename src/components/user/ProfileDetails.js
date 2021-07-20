@@ -36,7 +36,7 @@ const ProfileDetails = (props) => {
     props.submit(values);
   };
   const changePassword = () => {
-    props.changePassword(password);
+    props.changePassword({ _id: values._id, password: password });
     setPassword("");
   };
   return (

@@ -11,6 +11,10 @@ export const PROFILE_SUCCESS = "PROFILE_SUCCESS";
 export const USER_UPDATE_SUCCESS = "USER_UPDATE_SUCCESS";
 export const USER_UPDATE_FAIL = "USER_UPDATE_FAIL";
 
+/* password */
+export const PASSWORD_CHANGE_FAIL = "PASSWORD_CHANGE_FAIL";
+export const PASSWORD_CHANGE_SUCCESS = "PASSWORD_CHANGE_SUCCESS";
+
 export const SET_MESSAGE = "SET_MESSAGE";
 
 /* restaurant */
